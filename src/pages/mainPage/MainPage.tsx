@@ -49,7 +49,7 @@ export default function MainPage() {
     // API Requests
     const getLorasList = async () => {
         axios
-            .get(`${process.env.NEXT_PUBLIC_API_URI}/loras-list`)
+            .get(`${process.env.NEXT_PUBLIC_API_URI}/loras/list`)
             ?.then((res: any) => {
                 if (res?.data?.length > 0) {
                     setLorasList(res?.data);

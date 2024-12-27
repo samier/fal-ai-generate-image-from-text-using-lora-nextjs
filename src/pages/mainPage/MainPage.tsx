@@ -4,13 +4,10 @@ import Button from "@/components/button/Button";
 import axios from "axios";
 import React from "react";
 import { ClipLoader } from "react-spinners";
-import { downloadImageFiles, extractFileName, hideToast, showToast } from "@/utils/CommonFunctions";
+import { downloadImageFiles, showToast } from "@/utils/CommonFunctions";
 import styles from './MainPage.module.css';
 import Select from "../../components/select/Select";
 import { IMAGE_SIZE } from "@/constants/constants";
-import { toast } from "react-toastify";
-import JSZip from "jszip";
-import { saveAs } from 'file-saver';
 
 type OwnedWorksItem = {
     name: string;
@@ -133,13 +130,6 @@ export default function MainPage() {
                 textarea.focus();
             }, 0);
         }
-    };
-
-    const handleChange = (name: any, scale: any) => {
-        const updatedData = selectedLoras?.map((item: any) =>
-            item.name === name ? { ...item, scale: Number(scale) } : item
-        );
-        setSelectedLoras(updatedData);
     };
 
     const onChangePrompt = (e: any) => {
@@ -365,10 +355,6 @@ export default function MainPage() {
                                     </div>
                                 </div>
                                 <div>
-                                    {/* <p className="sm:text-lg text-base text-white">
-                                        Loras Scales
-                                    </p>
-                                    <RenderScales /> */}
                                 </div>
                                 <div className="lg:flex-row md:flex-col sm:flex-row flex-col flex lg:gap-4 gap-1 justify-between">
                                     <label htmlFor="steps" className="text-white">
@@ -400,7 +386,7 @@ export default function MainPage() {
                                 <div className="h-40 rounded-md border bg-[#2e334d] flex-1 p-3">
                                     <textarea
                                         name="prompt"
-                                        id="prompt"
+                                        id="negativePrompt"
                                         value={negativePrompt}
                                         onChange={(e: any) => setNegativePrompt(e?.target?.value)}
                                         className="bg-transparent w-full resize-none text-white px-3 py-2 focus:outline-none h-full"

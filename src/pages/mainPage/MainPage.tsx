@@ -4,9 +4,9 @@ import Button from "@/components/button/Button";
 import axios from "axios";
 import React from "react";
 import { ClipLoader } from "react-spinners";
-import { showToast } from "@/utils/CommonFunctions";
+import { downloadImageFiles, showToast } from "@/utils/CommonFunctions";
 import styles from './MainPage.module.css';
-import Select from "../select/Select";
+import Select from "../../components/select/Select";
 import { IMAGE_SIZE } from "@/constants/constants";
 
 type OwnedWorksItem = {
@@ -30,11 +30,10 @@ export default function MainPage() {
     const [textValue, setTextValue] = React.useState("");
     const [imageSize, setImageSize] = React.useState<string>("");
     const [negativePrompt, setNegativePrompt] = React.useState<string>("");
-    const [allScale, setAllScale] = React.useState<any>([]);
     const [lorasList, setLorasList] = React.useState<OwnedWorksItem[]>([]);
     const [images, setImages] = React.useState<ImageType[]>([]);
-    const [allScales, setAllScales] = React.useState<any>([]);
-    const [scale, setScale] = React.useState<number>(1.2);
+    const [selectedLoras, setSelectedLoras] = React.useState<any>([]);
+    const [guardianScale, setGuardianScale] = React.useState<number>(1.2);
     const [noOfImages, setNoOfImages] = React.useState<number>(1);
     const [steps, setSteps] = React.useState<number>(28);
     const [imageLoading, setImageLoading] = React.useState<boolean>(false);
@@ -47,7 +46,7 @@ export default function MainPage() {
     // API Requests
     const getLorasList = async () => {
         axios
-            .get(`${process.env.NEXT_PUBLIC_API_URI}/loras-list`)
+            .get(`${process.env.NEXT_PUBLIC_API_URI}/loras/list`)
             ?.then((res: any) => {
                 if (res?.data?.length > 0) {
                     setLorasList(res?.data);
@@ -103,8 +102,8 @@ export default function MainPage() {
     };
 
     // Events
-    const handleScaleSet = (index: number, newScale: number) => {
-        setAllScale((prev: any) =>
+    const handleLorasScale = (index: number, newScale: number) => {
+        setSelectedLoras((prev: any) =>
             prev.map((item: any, i: any) =>
                 i === index ? { ...item, scale: newScale } : item
             )
@@ -124,20 +123,13 @@ export default function MainPage() {
             if (prompt.charAt(0) === ",") {
                 prompt = prompt.slice(1);
             }
-            setAllScales(filterWorks(prompt));
+            setSelectedLoras(filterWorks(prompt));
             setTimeout(() => {
                 const newCursorPosition = start + `FF-${path}`.length;
                 textarea.setSelectionRange(newCursorPosition, newCursorPosition);
                 textarea.focus();
             }, 0);
         }
-    };
-
-    const handleChange = (name: any, scale: any) => {
-        const updatedData = allScales.map((item: any) =>
-            item.name === name ? { ...item, scale: Number(scale) } : item
-        );
-        setAllScales(updatedData);
     };
 
     const onChangePrompt = (e: any) => {
@@ -149,7 +141,7 @@ export default function MainPage() {
         const works = newArr.map((item: any) => {
             return { path: item.path, scale: 1.27, name: item.name };
         });
-        setAllScales(works);
+        setSelectedLoras(works);
         setTextValue(e.target.value);
     };
 
@@ -169,7 +161,7 @@ export default function MainPage() {
         const ownedWorksName = e.dataTransfer.getData("text/plain");
         const text = ownedWorksName;
         const prompt = textValue.replaceAll("FF-", " ");
-        setAllScales(filterWorks(prompt + " " + text));
+        setSelectedLoras(filterWorks(prompt + " " + text));
         setTextValue(textValue + "FF-" + ownedWorksName + " ");
     };
 
@@ -183,10 +175,17 @@ export default function MainPage() {
         const newArr = lorasList.filter((item: OwnedWorksItem) =>
             keywords.includes(item?.name || "")
         );
-        return newArr.map((item: any) => {
-            return { path: item.path, scale: 1.27, name: item.name };
+        const updatedRecs = newArr.map((item: any) => {
+            const existingItem = selectedLoras.find((selectedItem: any) => selectedItem.name === item.name);
+            return {
+                path: item.path,
+                scale: existingItem ? existingItem?.scale : 1.27,
+                name: item.name
+            };
         });
+        return updatedRecs
     };
+
 
     const openImageInNewTab = (src: string) => {
         window.open(src, "_blank", "noopener,noreferrer");
@@ -206,9 +205,9 @@ export default function MainPage() {
             prompt: prompt?.trim(),
             ...(imageSize && { image_size: imageSize }),
             num_inference_steps: steps,
-            guidance_scale: scale,
+            guidance_scale: guardianScale,
             num_images: noOfImages,
-            loras: allScales,
+            loras: selectedLoras,
             negative_prompt: negativePrompt,
         };
 
@@ -216,32 +215,6 @@ export default function MainPage() {
     };
 
     // Render Components
-    const RenderScales = () => {
-        return allScales.map((item: any, index: number) => {
-            return (
-                <div className={`lg:flex-row md:flex-col sm:flex-row flex-col flex lg:gap-4 gap-1 justify-between py-1.5 pl-5`} key={index}>
-                    <label htmlFor="scale" className="text-white">
-                        {item?.name} Scale
-                    </label>
-                    <div className="lg:w-11/12 w-full flex justify-center items-center gap-2">
-                        <input
-                            type="range"
-                            min={0.0}
-                            max={4.0}
-                            value={item?.scale}
-                            id="scale"
-                            step={0.01}
-                            className="w-11/12"
-                            onChange={(e: any) =>
-                                handleChange(item.name, e.target.value)
-                            }
-                        />
-                        <RenderSpan value={item?.scale} />
-                    </div>
-                </div>
-            );
-        });
-    }
     const RenderSpan = ({ value }: { value: string | number }) => {
         return <span className={`text-black dark:text-black ${styles.span_value}`}>
             {value}
@@ -249,7 +222,7 @@ export default function MainPage() {
     }
     const RenderLoras = () => {
         return lorasList?.map((res: OwnedWorksItem, index: number) => {
-            const isSelected = allScales?.some(
+            const isSelected = selectedLoras?.some(
                 (item: any) => item?.name == res?.name
             );
             const isOwnedWork = res?.owned_type == "Owned";
@@ -273,10 +246,10 @@ export default function MainPage() {
         });
     }
     const RenderScaleInputs = () => {
-        return allScale.length > 0 && (
+        return selectedLoras?.length > 0 && (
             <div>
                 <p className="text-lg text-white">Loras Scales</p>
-                {allScale.map((item: any, index: number) => (
+                {selectedLoras?.map((item: any, index: number) => (
                     <div
                         className="flex-row flex justify-between py-1.5 pl-5"
                         key={index}
@@ -294,7 +267,7 @@ export default function MainPage() {
                                 step={0.01}
                                 className="w-11/12"
                                 onChange={(e: any) =>
-                                    handleScaleSet(index, Number(e.target.value))
+                                    handleLorasScale(index, Number(e.target.value))
                                 }
                             />
                             <RenderSpan value={item?.scale} />
@@ -372,21 +345,17 @@ export default function MainPage() {
                                             type="range"
                                             min={0.0}
                                             max={4.0}
-                                            value={scale}
+                                            value={guardianScale}
                                             id="scale"
                                             step={0.01}
                                             className="w-11/12"
-                                            onChange={(e: any) => setScale(Number(e.target.value))}
+                                            onChange={(e: any) => setGuardianScale(Number(e.target.value))}
                                         />
 
-                                        <RenderSpan value={scale} />
+                                        <RenderSpan value={guardianScale} />
                                     </div>
                                 </div>
                                 <div>
-                                    <p className="sm:text-lg text-base text-white">
-                                        Loras Scales
-                                    </p>
-                                    <RenderScales />
                                 </div>
                                 <div className="lg:flex-row md:flex-col sm:flex-row flex-col flex lg:gap-4 gap-1 justify-between">
                                     <label htmlFor="steps" className="text-white">
@@ -418,7 +387,7 @@ export default function MainPage() {
                                 <div className="h-40 rounded-md border bg-[#23282d] flex-1 p-3 mt-2">
                                     <textarea
                                         name="prompt"
-                                        id="prompt"
+                                        id="negativePrompt"
                                         value={negativePrompt}
                                         onChange={(e: any) => setNegativePrompt(e?.target?.value)}
                                         className="bg-transparent w-full resize-none text-white px-3 py-2 focus:outline-none h-full"
@@ -478,6 +447,10 @@ export default function MainPage() {
                             ))
                         )}
                     </div>
+                    {images?.length > 0 && <Button
+                        onClick={() => downloadImageFiles(images)}
+                        label="Download"
+                    />}
                 </div>
             </div>
         </div>

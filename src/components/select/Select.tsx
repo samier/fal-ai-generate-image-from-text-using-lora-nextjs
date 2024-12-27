@@ -14,7 +14,7 @@ export default function Select({ onChange, items, className, optionClassName, na
         name={name}
         id={id}
         onChange={onChange}
-        className={`rounded-md border bg-transparent cursor-pointer text-white lg:w-11/12 w-full focus:outline-none ${className || ''}`}
+        className={`p-2 rounded-md border bg-transparent cursor-pointer text-white lg:w-11/12 w-full focus:outline-none ${className || ''}`}
     >
         {items?.map((item: SelectItemType, index) => {
             return <option key={index} value={item?.value} className={`text-black ${optionClassName || ''}`}>

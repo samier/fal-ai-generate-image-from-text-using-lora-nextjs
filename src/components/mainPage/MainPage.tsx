@@ -262,7 +262,7 @@ export default function MainPage() {
                         key={index}
                         onClick={() => handleActionClick(res?.name, isSelected)}
                         className={`${styles.lora} hover:bg-[#111419] ${!isSelected
-                            ? "bg-[#38394f]"
+                            ? "bg-[#23282d]"
                             : "bg-[#f2bcbc] hover:bg-[#ecadad]"
                             }`}
                     >
@@ -311,13 +311,13 @@ export default function MainPage() {
                 General Image
             </h1>
             <div className="flex lg:flex-row flex-col-reverse gap-4">
-                <div className="lg:w-3/4 w-full flex-grow bg-[#2c2d44] rounded-md p-3">
+                <div className="lg:w-3/4 w-full flex-grow bg-[#32373c] rounded-md p-3">
                     <p className="text-white sm:text-xl text-base font-semibold">
                         Prompt
                     </p>
                     <div>
                         <div className="flex md:flex-row flex-col justify-between gap-3 mt-4 ">
-                            <div className="rounded-md border bg-[#2e334d] flex-1 p-3">
+                            <div className="rounded-md border bg-[#23282d] flex-1 p-3">
                                 <textarea
                                     onDrop={(e: any) => handleDrop(e)}
                                     onDragOver={(e: any) => handleDragOver(e)}
@@ -330,7 +330,7 @@ export default function MainPage() {
                                     placeholder="Enter your imagination..."
                                 ></textarea>
                             </div>
-                            <div className="md:w-2/4 w-full min-h-44 rounded-md border bg-[#2e334d] p-5 flex flex-col justify-between gap-3 h-52 overflow-y-scroll">
+                            <div className={`md:w-2/4 w-full min-h-44 rounded-md border bg-[#23282d] p-5 flex flex-col justify-between gap-3 h-52 overflow-y-auto ${styles.box_scroll}`} >
                                 <div className="lg:flex-row md:flex-col sm:flex-row flex-col flex justify-between">
                                     <label htmlFor="noOfImages" className="text-white">
                                         Number of images
@@ -352,10 +352,11 @@ export default function MainPage() {
                                     </div>
                                 </div>
                                 <div className="lg:flex-row md:flex-col sm:flex-row flex-col sm:gap-2 gap-2 flex justify-between">
-                                    <label htmlFor="imgSize" className="text-white">
+                                    <label htmlFor="imgSize" className="text-white whitespace-nowrap">
                                         Image Size
                                     </label>
                                     <Select
+                                    
                                         onChange={(e: any) => setImageSize(e.target?.value || "")}
                                         items={IMAGE_SIZE}
                                         name="imgSize"
@@ -363,7 +364,7 @@ export default function MainPage() {
                                     />
                                 </div>
                                 <div className="lg:flex-row md:flex-col sm:flex-row flex-col flex justify-between">
-                                    <label htmlFor="scale" className="text-white">
+                                    <label htmlFor="scale" className="text-white whitespace-nowrap">
                                         Guidance Scale
                                     </label>
                                     <div className="lg:w-11/12 w-full flex justify-center items-center gap-2">
@@ -414,7 +415,7 @@ export default function MainPage() {
                                 <h1 className="text-white font-semibold rounded-md py-2 sm:text-xl text-base">
                                     Negative Prompt
                                 </h1>
-                                <div className="h-40 rounded-md border bg-[#2e334d] flex-1 p-3">
+                                <div className="h-40 rounded-md border bg-[#23282d] flex-1 p-3 mt-2">
                                     <textarea
                                         name="prompt"
                                         id="prompt"
@@ -433,7 +434,7 @@ export default function MainPage() {
                         />
                     </div>
                 </div>
-                <div className="lg:w-1/4 w-full lg:h-screen h-48  overflow-y-scroll flex-grow bg-[#2c2d44] rounded-md p-3 py-5">
+                <div className="lg:w-1/4 w-full lg:h-screen h-48  overflow-y-auto flex-grow bg-[#32373c] rounded-md p-3 py-5">
                     {isLoading ? (
                         <div className="h-full w-full flex items-center justify-center">
                             <ClipLoader color="#fff" loading={isLoading} size={50} />
@@ -451,12 +452,12 @@ export default function MainPage() {
                 </div>
             </div>
             <div className="bg-transparent md:flex-row flex-col-reverse flex gap-3">
-                <div className="bg-[#2c2d44] p-3 rounded-md w-full">
+                <div className="bg-[#32373c] p-3 rounded-md w-full">
                     <p className="text-white sm:text-xl text-base font-semibold">
                         Generate Result
                     </p>
                     <div
-                        className={`rounded-md border gap-5 overflow-x-auto p-3  flex items-start w-auto ${images?.length < 1 && "h-52"} ${imageLoading && "h-52"}`}>
+                        className={`rounded-md border gap-5 overflow-x-auto p-3 mt-4 bg-[#23282d]  flex items-start w-auto ${images?.length < 1 && "h-52"} ${imageLoading && "h-52"} ${styles.box_scroll }`} >
                         {imageLoading ? (
                             <div className={styles.imgLoader}>
                                 <ClipLoader color="#fff" loading={imageLoading} size={50} />

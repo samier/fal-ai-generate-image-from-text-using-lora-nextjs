@@ -21,3 +21,24 @@
   left: 50%;
   top: 40%;
 }
+
+
+.box_scroll::-webkit-scrollbar {
+  width: 5px;
+}
+
+
+/* Handle */
+.box_scroll::-webkit-scrollbar-thumb {
+  background: rgb(214, 213, 213); 
+  border-radius: 100px;
+}
+
+/* Handle on hover */
+.box_scroll::-webkit-scrollbar-thumb:hover {
+  background: rgb(214, 213, 213);
+  border-radius: 100px;
+}
+.box_scroll label{
+  min-width: 160px;
+}

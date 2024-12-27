@@ -6,3 +6,7 @@
 .loader {
   margin-left: 5px;
 }
+
+.app_dark_btn{
+  background: linear-gradient(to right, #373f49, #38485b, #21455e, #4e4376);
+}

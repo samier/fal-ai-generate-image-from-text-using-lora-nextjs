@@ -210,8 +210,10 @@ export default function MainPage() {
             loras: selectedLoras,
             negative_prompt: negativePrompt,
         };
-
+        setImages([]);
         generateImage(payload);
+        setTextValue('');
+        setNegativePrompt('');
     };
 
     // Render Components
@@ -329,7 +331,7 @@ export default function MainPage() {
                                         Image Size
                                     </label>
                                     <Select
-                                    
+
                                         onChange={(e: any) => setImageSize(e.target?.value || "")}
                                         items={IMAGE_SIZE}
                                         name="imgSize"
@@ -426,7 +428,7 @@ export default function MainPage() {
                         Generate Result
                     </p>
                     <div
-                        className={`rounded-md border gap-5 overflow-x-auto p-3 mt-4 bg-[#23282d]  flex items-start w-auto ${images?.length < 1 && "h-52"} ${imageLoading && "h-52"} ${styles.box_scroll }`} >
+                        className={`rounded-md border gap-5 overflow-x-auto p-3 mt-4 bg-[#23282d]  flex items-start w-auto ${images?.length < 1 && "h-52"} ${imageLoading && "h-52"} ${styles.box_scroll}`} >
                         {imageLoading ? (
                             <div className={styles.imgLoader}>
                                 <ClipLoader color="#fff" loading={imageLoading} size={50} />

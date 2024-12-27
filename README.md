@@ -31,3 +31,7 @@
 - Submit the form.
 - Wait for the AI to generate the image.
 - View the generated image below the form.
+
+## Example GIF
+
+![Example GIF](src/assets/example.gif)

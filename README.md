@@ -4,6 +4,9 @@
   It utilizes the FAL-AI Flux LoRA API to generate stunning images from text prompts and pre-trained LoRA models.
   The generated images are displayed seamlessly below the input form.
 
+# Backend Repository
+- [Click here](https://github.com/samier/fal-ai-generate-image-from-text-using-lora-nodejs)
+
 🛠️ Installation
 
 1. Clone the Repository
@@ -22,7 +25,7 @@
 
 - Frontend: Next.js
 - Backend: Node.js
-- API: FAL-AI Flux LoRA API
+- API: [FAL-AI Flux LoRA API here](https://fal.ai/models/fal-ai/flux-lora)
 - Styling: CSS / TailwindCSS
 
 🌟 How to Use
